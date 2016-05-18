@@ -11,7 +11,7 @@ Note: under ubuntu the `initdb` command is not provided in the path. You should 
 The sentinel will become the sentinels leader for `stolon-cluster` and initialize the first clusterview.
 
 ```
-./bin/stolon-sentinel --cluster-name stolon-cluster
+./bin/stolon-sentinel --cluster-name stolon-cluster --store-backend etcd
 ```
 
 ```
@@ -22,8 +22,10 @@ sentinel: sentinel leadership acquired
 
 ### Launch first keeper
 
+as the postgres user
+
 ```
-./bin/stolon-keeper --data-dir data/postgres0 --id postgres0 --cluster-name stolon-cluster
+./bin/stolon-keeper --data-dir data/postgres0 --id postgres0 --cluster-name stolon-cluster --store-backend etcd --pg-bin-path /usr/pgsql95/bin
 ```
 
 This will start a stolon keeper with id `postgres0` listening by default on localhost:5431, it will setup and initialize a postgres instance inside `data/postgres0/postgres/`
@@ -53,7 +55,7 @@ sentinel: I'm the sentinels leader
 Now we can start the proxy
 
 ```
-./bin/stolon-proxy --cluster-name stolon-cluster --port 25432
+./bin/stolon-proxy --cluster-name stolon-cluster --port 25432 --store-backend etcd
 ```
 
 ```
@@ -67,7 +69,7 @@ pgproxy: addr: 127.0.0.1:5432
 Since this simple cluster is running on localhost, the current user (which started the first keeper) is the same superuser created at db initialization and the default pg_hba.conf trusts it, you can login without a password.
 
 ```
-psql --host 10.247.50.217 --port 5432 postgres
+psql --host 10.247.50.217 --port 25432 postgres
 Password for user stolon:
 psql (9.4.5, server 9.4.4)
 Type "help" for help.
@@ -93,8 +95,10 @@ postgres=# select * from test;
 
 ### Start another keeper:
 
+As the postgres user
+
 ```
-./bin/stolon-keeper --data-dir data/postgres1 --id postgres1 --cluster-name stolon-cluster --port 5433 --pg-port 5435
+./bin/stolon-keeper --data-dir data/postgres1 --id postgres1 --cluster-name stolon-cluster --port 5433 --pg-port 5435 --pg-bin-path /usr/pgsql95/bin
 ```
 
 This instance will start replicating from the master (postgres0)
