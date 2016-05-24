@@ -33,6 +33,10 @@ spec:
             value: "stolon"
           - name: STKEEPER_INITIAL_PG_SU_PASSWORD_FILE
             value: "/etc/secrets/stolon/password"
+          - name: STKEEPER_INITIAL_PG_REPL_USERNAME
+            value: "stolon"
+          - name: STKEEPER_INITIAL_PG_REPL_PASSWORD_FILE
+            value: "/etc/secrets/stolon/password"
         ports:
           - containerPort: 5431
           - containerPort: 5432
