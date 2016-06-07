@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: stolon-etcd
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: stolon-etcd
+    spec:
+      containers:
+      - name: stolon-etcd
+        image: elcolio/etcd:latest
+        ports:
+        - containerPort: 2379
+        - containerPort: 4001
